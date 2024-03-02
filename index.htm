@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <div class="nav-container">
+    <nav>
+      <h1>kentle</h1>
+      <h2>How to play?</h2>
+    </nav>
+  </div>
+  <main>
+    <section class="cover-square-container">
+      <div class="cover-square">
+        <span>?</span>
+      </div>
+    </section>
+
+    <button id="get-song">yes</button>
+    
+    <div class="play-button-container">
+      <button class="play-button" id="play-song"><img class="play-button-image" src="images/playbutton.png"></button>
+    </div>
+
+    <section class="search-section">
+      <div class="search-container">
+        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <datalist id="songs"></datalist>
+      </div>
+      <div class="search-container">
+        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <datalist id="songs"></datalist>
+      </div>
+      <div class="search-container">
+        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <datalist id="songs"></datalist>
+      </div>
+      <div class="search-container">
+        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <datalist id="songs"></datalist>
+      </div>
+    </section>
+
+    
+  </main>
+
+  <script>
+    const songList = document.getElementById("songs");
+    const songFile = "songs.txt";
+
+    fetch(songFile, { encoding: "utf-8" })
+      .then(response => response.text())
+      .then(data => {
+        const songs = data.split("\n").map(song => song.trim());
+        songs.forEach(song => {
+          const option = document.createElement("option");
+          option.value = song;
+          songList.appendChild(option);
+        });
+      });
+
+    let play = document.getElementById("play-song")
+    function playMusic(){
+      let audio = new Audio("music/Blåjeans.mp3");
+      audio.volume = 0.25;
+      audio.play();
+    }
+    play.addEventListener("click", playMusic);
+
+    let get_song = document.getElementById("get-song")
+    async function getRandomFile() {
+      try {
+        const response = await fetch('http://localhost:3000/getRandomFile'); // Send a request to the server
+        const filePath = await response.text(); // Get the file path from the response
+        console.log("Random file path:", filePath);
+        // Use the file path here (e.g., play the audio, display an image, etc.)
+      } catch (error) {
+        console.error("Error fetching random file:", error);
+      }
+    }
+    get_song.addEventListener("click", getRandomFile);
+  </script>
+</body>
+
+</html>
