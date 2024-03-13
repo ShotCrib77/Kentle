@@ -23,8 +23,6 @@
         <span>?</span>
       </div>
     </section>
-
-    <button id="get-song">yes</button>
     
     <div class="play-button-container">
       <button class="play-button" id="play-song"><img class="play-button-image" src="images/playbutton.png"></button>
@@ -69,7 +67,7 @@
 
     let play = document.getElementById("play-song")
     function playMusic(){
-      let audio = new Audio("music/Blåjeans.mp3");
+      let audio = new Audio(songPath);
       audio.volume = 0.25;
       audio.play();
     }
@@ -81,12 +79,20 @@
         const response = await fetch('http://localhost:3000/getRandomFile'); // Send a request to the server
         const filePath = await response.text(); // Get the file path from the response
         console.log("Random file path:", filePath);
+        return filePath
         // Use the file path here (e.g., play the audio, display an image, etc.)
       } catch (error) {
         console.error("Error fetching random file:", error);
       }
     }
-    get_song.addEventListener("click", getRandomFile);
+
+    let songPath;
+
+    getRandomFile().then((path) => {
+      songPath = path;
+    });
+    
+
   </script>
 </body>
 
