@@ -10,7 +10,7 @@ app.use(cors({
   origin: ["http://localhost:3000", "http://127.0.0.1:5500"]  // Adjusted origins for clarity
 }));
 
-const folderPath = 'music'; // Replace with the actual folder path
+const folderPath = 'music';
 
 app.get('/getRandomFile', (req, res) => {
   fs.readdir(folderPath, (err, files) => {

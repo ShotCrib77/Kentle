@@ -7,21 +7,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
-  <link href="style.css" rel="stylesheet" type="text/css">
+  <link href="style.css" rel="stylesheet" type="text/css">'
 </head>
 
 <body>
   <div class="nav-container">
     <nav>
       <h1>kentle</h1>
-      <h2>How to play?</h2>
+      <h2>How to play?</h2> <!--Add a guide-->
     </nav>
   </div>
   <main>
-    <section class="cover-square-container">
-      <div class="cover-square">
-        <span>?</span>
-      </div>
+    <section class="guess-the-song">
+      <h1>GISSA LÅTEN!</h1>
+      <span id="song-num"></span>
+      <span class="album-text">Albumbild</span>
+      <section class="cover-square-container">
+        <div class="cover-square">
+          <img id="album-img" src="Album/Kent.jpg" alt="Cover"> <!-- Add the Correct name of the cover???? AND the correct name of the cover (variable)-->
+          <span id="cover-questionmark">?</span>
+        </div>
+      </section>
     </section>
     
     <div class="play-button-container">
@@ -30,24 +36,73 @@
 
     <section class="search-section">
       <div class="search-container">
-        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <input type="text" id="guess-1" name="song" list="songs" autocomplete="off" placeholder="Gissa låten" class="song-input">
         <datalist id="songs"></datalist>
       </div>
+      <span class="feedback" id="feedback-1">+8s!</span>
       <div class="search-container">
-        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <input type="text" id="guess-2" name="song" list="songs" autocomplete="off" placeholder="Gissa låten" class="song-input" readonly="ture">
         <datalist id="songs"></datalist>
       </div>
+      <span class="feedback" id="feedback-2">Albumbild!<br>+5s!</span>
       <div class="search-container">
-        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <input type="text" id="guess-3" name="song" list="songs" autocomplete="off" placeholder="Gissa låten" class="song-input" readonly="ture">
         <datalist id="songs"></datalist>
       </div>
+      <span class="feedback" id="feedback-3">Mitten av låten (1m in)<br>+5s</span>
       <div class="search-container">
-        <input type="text" id="song" name="song" list="songs" autocomplete="on" placeholder="Search Song">
+        <input type="text" id="guess-4" name="song" list="songs" autocomplete="off" placeholder="Gissa låten" class="song-input" readonly="ture">
         <datalist id="songs"></datalist>
       </div>
     </section>
 
-    
+    <div class="next-and-point-container">
+      <span id="answer"></span>
+      <span id="point-score">Poäng: 0</span>
+      <span tabindex="1" id="next-question-button">Next song!</span>
+    </div>
+
+    <section class="leaderboard-section">
+        <div id="header">
+          <h1>Leaderboard</h1>
+        </div>
+        <div id="leaderboard">
+          <div class="ribbon"></div>
+          <table>
+            <tr>
+              <td class="number">1</td>
+              <td class="name">Lil Sprout</td>
+              <td class="points">
+                2000 <img class="gold-medal" src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true" alt="gold medal"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="number">2</td>
+              <td class="name">Philip Jansson</td>
+              <td class="points">1600</td>
+            </tr>
+            <tr>
+              <td class="number">3</td>
+              <td class="name">Zixuan Huang</td>
+              <td class="points">1550</td>
+            </tr>
+            <tr>
+              <td class="number">4</td>
+              <td class="name"></td>
+              <td class="points"></td>
+            </tr>
+            <tr>
+              <td class="number">5</td>
+              <td class="name">Emanuel Hed</td>
+              <td class="points">450</td>
+            </tr>
+          </table>
+          <div id="buttons">
+            <button class="exit">Close</button>
+            <button class="continue">Submit Score</button>
+          </div>
+        </div>
+    </section>
   </main>
 
   <script>
@@ -65,34 +120,172 @@
         });
       });
 
-    let play = document.getElementById("play-song")
-    function playMusic(){
-      let audio = new Audio(songPath);
-      audio.volume = 0.25;
-      audio.play();
-    }
-    play.addEventListener("click", playMusic);
-
     let get_song = document.getElementById("get-song")
-    async function getRandomFile() {
-      try {
-        const response = await fetch('http://localhost:3000/getRandomFile'); // Send a request to the server
-        const filePath = await response.text(); // Get the file path from the response
-        console.log("Random file path:", filePath);
-        return filePath
-        // Use the file path here (e.g., play the audio, display an image, etc.)
-      } catch (error) {
-        console.error("Error fetching random file:", error);
-      }
-    }
-
+    let maxDuration;
     let songPath;
+    let correctSongName;
+    let audio;
+    function getNewSong() {
+        async function getRandomFile() {
+          try {
+            const response = await fetch('http://localhost:3000/getRandomFile'); // Send a request to the server
+            const filePath = await response.text(); // Get the file path from the response
+            console.log("Random file path:", filePath);
+            return filePath
+            // Use the file path here (e.g., play the audio, display an image, etc.)
+          } catch (error) {
+            console.error("Error fetching random file:", error);
+          }
+        }
 
-    getRandomFile().then((path) => {
-      songPath = path;
-    });
+        getRandomFile().then((path) => {
+          songPath = path;
+          audio = new Audio(songPath);
+          correctSongName = songPath.split('\\').pop().split('.').shift();
+        });
+        
+        maxDuration = 7;
+    }
+    
     
 
+    function nextSong() {
+      getNewSong()
+      guessCount = 0
+      albumImage.style.display = "none";
+      coverQuestionmark.style.display = "block";
+      
+      for (const item of displayNoneList) {
+        item.style.display = "none";
+      }
+
+      for (const guess of guessList) {
+        guess.style.background = "#F6F6F6";
+        guess.value = "";
+        guess.readOnly = true;
+      }
+      guess1.readOnly = false;
+      
+      songNumberValue.textContent = "Låt: " + songNumber + "/5";
+      pointScore.textContent = "Poäng: " + playerScore;
+    }
+
+    let play = document.getElementById("play-song");
+    let songNumberValue = document.getElementById("song-num");
+
+    function playMusic() {
+      audio.play();
+      audio.addEventListener("timeupdate", function() {
+        if (audio.currentTime > maxDuration) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      });
+    }
+    
+    let guess1 = document.getElementById("guess-1");
+    let guess2 = document.getElementById("guess-2");
+    let guess3 = document.getElementById("guess-3");
+    let guess4 = document.getElementById("guess-4");
+    let nextButton = document.getElementById("next-question-button");
+    let pointScore = document.getElementById("point-score");
+    let answer = document.getElementById("answer")
+    let feedback_1 = document.getElementById("feedback-1")
+    let feedback_2 = document.getElementById("feedback-2")
+    let feedback_3 = document.getElementById("feedback-3")
+    const displayNoneList = [feedback_1, feedback_2, feedback_3, nextButton, pointScore, answer];
+    const guessList = [guess1, guess2, guess3, guess4];
+    nextButton.addEventListener("click", function() {
+      audio.pause();
+      nextSong();
+  });
+
+    play.addEventListener("click", playMusic);
+
+    let albumImage = document.getElementById("album-img");
+    let coverQuestionmark = document.getElementById("cover-questionmark");
+    let songNameInputs = document.getElementsByClassName("song-input");
+    let guessCount;
+    let playerScore = 0;
+    let songNumber = 1;
+    Array.from(songNameInputs).forEach(input => {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          let inputValue = input.value;
+          console.log(inputValue)
+          if (inputValue.length != 0) {
+            input.readOnly = true;
+            if (inputValue.toLowerCase() === correctSongName.toLowerCase()) {
+              input.style.backgroundColor = "#65B163";
+              songNumber += 1;
+
+              if (guessCount === 0) {
+                playerScore += 400;
+              }
+            
+              if (guessCount === 1) {
+                playerScore += 350;
+              }
+            
+              if (guessCount === 2) {
+                playerScore += 300;
+              }
+
+              if (guessCount === 3){
+                playerScore += 200;
+              }
+              pointScore.textContent = "Poäng: " + playerScore;
+              pointScore.style.display = "block";
+              answer.style.display = "block";
+              nextButton.style.display = "block";
+              audio.pause();
+            }
+
+            else {
+              input.style.backgroundColor = "#BBBBBB";
+              guessCount += 1
+              if (guessCount === 1) {
+                maxDuration += 8;
+                guess2.readOnly = false;
+                audio.currentTime = 0;
+                feedback_1.style.display = "block";
+              }
+              else if (guessCount === 2) {
+                maxDuration += 5;
+                albumImage.style.display = "block";
+                coverQuestionmark.style.display = "none";
+                guess3.readOnly = false;
+                audio.currentTime = 0;
+                feedback_2.style.display = "block";
+              }
+              else if (guessCount === 3) {
+                guess4.readOnly = false;
+                audio.currentTime = 60;
+                maxDuration += (60 + 5);
+                feedback_3.style.display = "block";
+              }
+              else if (guessCount === 4) {
+                songNumber += 1;
+                pointScore.textContent = "Poäng: " + playerScore;
+                answer.textContent = "Svar:\n" + correctSongName
+                pointScore.style.display = "block";
+                answer.style.display = "block";
+                nextButton.style.display = "block";
+              }
+              audio.pause();
+            }
+    
+
+          }
+
+        }
+      });
+    });
+    
+    nextSong()
+    
+
+    
   </script>
 </body>
 
