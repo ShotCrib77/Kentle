@@ -11,30 +11,32 @@
 </head>
 
 <body>
-  <div class="nav-container">
+
+  <header>
     <nav>
       <h1>kentle</h1>
-      <h2>How to play?</h2> <!--Add a guide-->
+      <h2 class="center-align">How to play?</h2> <!--Add a guide-->
     </nav>
-  </div>
+  </header>
+
   <main>
-    <section class="guess-the-song">
-      <h1>GISSA LÅTEN!</h1>
+    <section class="song-info-section" id="page-info">
+      <h1 id="main-header" class="center-align">GISSA LÅTEN!</h1>
       <span id="song-num"></span>
-      <span class="album-text">Albumbild</span>
-      <section class="cover-square-container">
+      <h2 class="album-text center-align" id="album-heading">Albumbild</h2>
+      <section class="cover-container center-align" id="album-cover">
         <div class="cover-square">
-          <img id="album-img" src="Album/Kent.jpg" alt="Cover"> <!-- Add the Correct name of the cover???? AND the correct name of the cover (variable)-->
+          <img id="album-image" src="Album/Kent.jpg" alt="Cover"> <!-- Add the Correct name of the cover???? AND the correct name of the cover (variable)-->
           <span id="cover-questionmark">?</span>
         </div>
       </section>
     </section>
     
-    <div class="play-button-container">
-      <button class="play-button" id="play-song"><img class="play-button-image" src="images/playbutton.png"></button>
-    </div>
+    <section class="play-button-section center-align">
+      <button class="play-button " id="play-song"><img class="play-button-image" src="images/playbutton.png"></button>
+    </section>
 
-    <section class="search-section">
+    <section class="search-song-section center-align"> <!-- Finns det något annat än div som jag kan använda i det här fallet? (Försökte <form> men det hade mycket preset CSS)-->
       <div class="search-container">
         <input type="text" id="guess-1" name="song" list="songs" autocomplete="off" placeholder="Gissa låten" class="song-input">
         <datalist id="songs"></datalist>
@@ -55,53 +57,59 @@
         <datalist id="songs"></datalist>
       </div>
     </section>
-
-    <div class="next-and-point-container">
+    
+    <section class="results-section center-align" id="results-section"> <!--Är det ok att döpa båda samma sak i det här fallet?-->
       <span id="answer"></span>
       <span id="point-score">Poäng: 0</span>
       <span tabindex="1" id="next-question-button">Next song!</span>
-    </div>
+    </section>
 
-    <section class="leaderboard-section">
+    <section class="leaderboard-section" id="leaderboard-section"> <!-- * -->
         <div id="header">
           <h1>Leaderboard</h1>
         </div>
         <div id="leaderboard">
           <div class="ribbon"></div>
           <table>
-            <tr>
+            <tr id="p1">
               <td class="number">1</td>
               <td class="name">Lil Sprout</td>
               <td class="points">
                 2000 <img class="gold-medal" src="https://github.com/malunaridev/Challenges-iCodeThis/blob/master/4-leaderboard/assets/gold-medal.png?raw=true" alt="gold medal"/>
               </td>
             </tr>
-            <tr>
+
+            <tr id="p2">
               <td class="number">2</td>
               <td class="name">Philip Jansson</td>
               <td class="points">1600</td>
             </tr>
-            <tr>
+
+            <tr id="p3">
               <td class="number">3</td>
               <td class="name">Zixuan Huang</td>
               <td class="points">1550</td>
             </tr>
-            <tr>
+            
+            <tr id="p4">
               <td class="number">4</td>
-              <td class="name"></td>
-              <td class="points"></td>
-            </tr>
-            <tr>
-              <td class="number">5</td>
-              <td class="name">Emanuel Hed</td>
+              <td class="name">A</td>
               <td class="points">450</td>
             </tr>
+
+            <tr id="p5">
+              <td class="number">5</td>
+              <td class="name">Emanuel Hed</td>
+              <td class="points">200</td>
+            </tr>
+
           </table>
           <div id="buttons">
-            <button class="exit">Close</button>
-            <button class="continue">Submit Score</button>
+            <button class="exit" id="play-again">Play Again</button>
+            <button class="continue" id="submit-results">Submit Score</button>
           </div>
         </div>
+        <input type="text", placeholder="Skriv in ditt användarnamn" id="player-name" class="username">
     </section>
   </main>
 
@@ -125,6 +133,7 @@
     let songPath;
     let correctSongName;
     let audio;
+
     function getNewSong() {
         async function getRandomFile() {
           try {
@@ -137,18 +146,17 @@
             console.error("Error fetching random file:", error);
           }
         }
-
+        console.log("File -> Audio")
         getRandomFile().then((path) => {
           songPath = path;
           audio = new Audio(songPath);
           correctSongName = songPath.split('\\').pop().split('.').shift();
+          console.log("Audio :->")
         });
         
         maxDuration = 7;
     }
     
-    
-
     function nextSong() {
       getNewSong()
       guessCount = 0
@@ -193,16 +201,47 @@
     let feedback_1 = document.getElementById("feedback-1")
     let feedback_2 = document.getElementById("feedback-2")
     let feedback_3 = document.getElementById("feedback-3")
+    
+    let mainHeader = document.getElementById("main-header")
+    let hiddenSquare = document.getElementById("album-cover")
+    let textAlbum = document.getElementById("album-heading")
+    let webbInfo = document.getElementById("page-info")
+    let pointsSection = document.getElementById("results-section")
+    let mainSection = document.querySelector('main');
+    let childElements = mainSection.childNodes;
+    let leaderboard = document.getElementById("leaderboard-section")
     const displayNoneList = [feedback_1, feedback_2, feedback_3, nextButton, pointScore, answer];
     const guessList = [guess1, guess2, guess3, guess4];
     nextButton.addEventListener("click", function() {
       audio.pause();
-      nextSong();
-  });
+      if (songNumber <= 5) {
+        nextSong();
+      }
+      else {
+        childElements.forEach(function(child) {
+          // Check if the node is an element node (nodeType 1)
+          if (child.nodeType === 1) {
+              child.style.display = 'none';
+          }
+      });
+
+        leaderboard.style.display = "flex";
+        pointsSection.style.display = "flex";
+        pointsSection.style.justifyContent = "flex-start";
+        answer.style.display = "none";
+        nextButton.style.display = "none";
+        webbInfo.style.display = "block";
+        songNumberValue.style.display = "none";
+        textAlbum.style.display = "none";
+        hiddenSquare.style.display = "none";
+        mainHeader.textContent = "Din Poängsumma!"
+        
+      }
+    });
 
     play.addEventListener("click", playMusic);
 
-    let albumImage = document.getElementById("album-img");
+    let albumImage = document.getElementById("album-image");
     let coverQuestionmark = document.getElementById("cover-questionmark");
     let songNameInputs = document.getElementsByClassName("song-input");
     let guessCount;
@@ -236,7 +275,6 @@
               }
               pointScore.textContent = "Poäng: " + playerScore;
               pointScore.style.display = "block";
-              answer.style.display = "block";
               nextButton.style.display = "block";
               audio.pause();
             }
@@ -267,7 +305,7 @@
               else if (guessCount === 4) {
                 songNumber += 1;
                 pointScore.textContent = "Poäng: " + playerScore;
-                answer.textContent = "Svar:\n" + correctSongName
+                answer.textContent = "Svar:\n" + correctSongName;
                 pointScore.style.display = "block";
                 answer.style.display = "block";
                 nextButton.style.display = "block";
@@ -283,10 +321,90 @@
     });
     
     nextSong()
+
+
+    let place1 = document.getElementById("p1");
+    let name1 = place1.querySelector(".name").textContent;
+    let points1 = place1.querySelector(".points").textContent.trim();
+
+    let place2 = document.getElementById("p2");
+    let name2 = place2.querySelector(".name").textContent;
+    let points2 = place2.querySelector(".points").textContent.trim();
+
+    let place3 = document.getElementById("p3");
+    let name3 = place3.querySelector(".name").textContent;
+    let points3 = place3.querySelector(".points").textContent.trim();
+
+    let place4 = document.getElementById("p4");
+    let name4 = place4.querySelector(".name").textContent;
+    let points4 = place4.querySelector(".points").textContent.trim();
+
+    let place5 = document.getElementById("p5");
+    let name5 = place5.querySelector(".name").textContent;
+    let points5 = place5.querySelector(".points").textContent.trim();
+
+    let playerName = document.getElementById("player-name");
+    let playAgain = document.getElementById("play-again");
+    let submit = document.getElementById("submit-results");
+
+    playAgain.addEventListener("click", function() {
+      replay()
+    });
+    
+    submit.addEventListener("click", function() {
+      if (playerName.value !== '' || playerName.value !== undefined) {
+        if (points1 < playerScore) {
+          place1.querySelector(".points").textContent = String(playerScore);
+          place1.querySelector(".name").textContent = playerName.value;
+          console.log("Updated place 1");
+      } else if (points2 < playerScore) {
+          place2.querySelector(".points").textContent = String(playerScore);
+          place2.querySelector(".name").textContent = playerName.value;
+          console.log("Updated place 2");
+      } else if (points3 < playerScore) {
+          place3.querySelector(".points").textContent = String(playerScore);
+          place3.querySelector(".name").textContent = playerName.value;
+          console.log("Updated place 3");
+      } else if (points4 < playerScore) {
+          place4.querySelector(".points").textContent = String(playerScore);
+          place4.querySelector(".name").textContent = playerName.value;
+          console.log("Updated place 4");
+      } else if (points5 < playerScore) {
+          place5.querySelector(".points").textContent = String(playerScore);
+          place5.querySelector(".name").textContent = playerName.value;
+          console.log("Updated place 5");
+      }
+      }
+    });
     
 
+    function replay() {
+      playerScore = 0;
+      songNumber = 1;
+
+      childElements.forEach(function(child) {
+        // Check if the node is an element node (nodeType 1)
+        if (child.nodeType === 1) {
+            child.style.display = 'flex';
+        }
+      });
+
+      leaderboard.style.display = "none";
+      pointsSection.style.display = "flex";
+      pointsSection.style.justifyContent = "center";
+      answer.style.display = "block";
+      nextButton.style.display = "block";
+      webbInfo.style.display = "block";
+      songNumberValue.style.display = "block";
+      textAlbum.style.display = "flex";
+      hiddenSquare.style.display = "flex";
+      mainHeader.textContent = "Gissa Låten!"
+
+      nextSong()
+    }
+
     
-  </script>
+</script>
 </body>
 
 </html>
