@@ -249,7 +249,7 @@
     let songNumber = 1;
     Array.from(songNameInputs).forEach(input => {
       input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter" || e.key === "Done" || e.key === "Go") {
           let inputValue = input.value;
           console.log(inputValue);
           if (inputValue.length != 0) {
