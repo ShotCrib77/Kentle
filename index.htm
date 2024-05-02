@@ -127,7 +127,7 @@
         });
       });
 
-    let get_song = document.getElementById("get-song");
+    const get_song = document.getElementById("get-song");
     let maxDuration;
     let songPath;
     let correctSongName;
@@ -178,8 +178,8 @@
       pointScore.textContent = "Poäng: " + playerScore;
     }
 
-    let play = document.getElementById("play-song");
-    let songNumberValue = document.getElementById("song-num");
+    const play = document.getElementById("play-song");
+    const songNumberValue = document.getElementById("song-num");
 
     function playMusic() {
       audio.play();
@@ -191,25 +191,25 @@
       });
     }
     
-    let guess1 = document.getElementById("guess-1");
-    let guess2 = document.getElementById("guess-2");
-    let guess3 = document.getElementById("guess-3");
-    let guess4 = document.getElementById("guess-4");
-    let nextButton = document.getElementById("next-question-button");
-    let pointScore = document.getElementById("point-score");
-    let answer = document.getElementById("answer");
-    let feedback_1 = document.getElementById("feedback-1");
-    let feedback_2 = document.getElementById("feedback-2");
-    let feedback_3 = document.getElementById("feedback-3");
+    const guess1 = document.getElementById("guess-1");
+    const guess2 = document.getElementById("guess-2");
+    const guess3 = document.getElementById("guess-3");
+    const guess4 = document.getElementById("guess-4");
+    const nextButton = document.getElementById("next-question-button");
+    const pointScore = document.getElementById("point-score");
+    const answer = document.getElementById("answer");
+    const feedback_1 = document.getElementById("feedback-1");
+    const feedback_2 = document.getElementById("feedback-2");
+    const feedback_3 = document.getElementById("feedback-3");
     
-    let mainHeader = document.getElementById("main-header");
-    let hiddenSquare = document.getElementById("album-cover");
-    let textAlbum = document.getElementById("album-heading");
-    let webbInfo = document.getElementById("page-info");
-    let pointsSection = document.getElementById("results-section");
-    let mainSection = document.querySelector('main');
-    let childElements = mainSection.childNodes;
-    let leaderboard = document.getElementById("leaderboard-section");
+    const mainHeader = document.getElementById("main-header");
+    const hiddenSquare = document.getElementById("album-cover");
+    const textAlbum = document.getElementById("album-heading");
+    const webbInfo = document.getElementById("page-info");
+    const pointsSection = document.getElementById("results-section");
+    const mainSection = document.querySelector('main');
+    const childElements = mainSection.childNodes;
+    const leaderboard = document.getElementById("leaderboard-section");
     const displayNoneList = [feedback_1, feedback_2, feedback_3, nextButton, pointScore, answer];
     const guessList = [guess1, guess2, guess3, guess4];
     nextButton.addEventListener("click", function() {
@@ -239,11 +239,26 @@
       }
     });
 
-    play.addEventListener("click", playMusic);
+    function resetScale() {
+      play.style.transform = "scale(1)";
+    }
 
-    let albumImage = document.getElementById("album-image");
-    let coverQuestionmark = document.getElementById("cover-questionmark");
-    let songNameInputs = document.getElementsByClassName("song-input");
+    function animateButton() {
+      play.style.transform = "scale(0.9)";
+    
+      setTimeout(resetScale, 100);
+    }
+
+    play.addEventListener("click", function() {
+      animateButton();
+      playMusic();
+    });
+    
+
+
+    const albumImage = document.getElementById("album-image");
+    const coverQuestionmark = document.getElementById("cover-questionmark");
+    const songNameInputs = document.getElementsByClassName("song-input");
     let guessCount;
     let playerScore = 0;
     let songNumber = 1;
@@ -323,29 +338,29 @@
     nextSong();
 
 
-    let place1 = document.getElementById("p1");
-    let name1 = place1.querySelector(".name").textContent;
-    let points1 = place1.querySelector(".points").textContent.trim();
+    const place1 = document.getElementById("p1");
+    const name1 = place1.querySelector(".name").textContent;
+    const points1 = place1.querySelector(".points").textContent.trim();
 
-    let place2 = document.getElementById("p2");
-    let name2 = place2.querySelector(".name").textContent;
-    let points2 = place2.querySelector(".points").textContent.trim();
+    const place2 = document.getElementById("p2");
+    const name2 = place2.querySelector(".name").textContent;
+    const points2 = place2.querySelector(".points").textContent.trim();
 
-    let place3 = document.getElementById("p3");
-    let name3 = place3.querySelector(".name").textContent;
-    let points3 = place3.querySelector(".points").textContent.trim();
+    const place3 = document.getElementById("p3");
+    const name3 = place3.querySelector(".name").textContent;
+    const points3 = place3.querySelector(".points").textContent.trim();
 
-    let place4 = document.getElementById("p4");
-    let name4 = place4.querySelector(".name").textContent;
-    let points4 = place4.querySelector(".points").textContent.trim();
+    const place4 = document.getElementById("p4");
+    const name4 = place4.querySelector(".name").textContent;
+    const points4 = place4.querySelector(".points").textContent.trim();
 
-    let place5 = document.getElementById("p5");
-    let name5 = place5.querySelector(".name").textContent;
-    let points5 = place5.querySelector(".points").textContent.trim();
+    const place5 = document.getElementById("p5");
+    const name5 = place5.querySelector(".name").textContent;
+    const points5 = place5.querySelector(".points").textContent.trim();
 
-    let playerName = document.getElementById("player-name");
-    let playAgain = document.getElementById("play-again");
-    let submit = document.getElementById("submit-results");
+    const playerName = document.getElementById("player-name");
+    const playAgain = document.getElementById("play-again");
+    const submit = document.getElementById("submit-results");
 
     playAgain.addEventListener("click", function() {
       replay();
