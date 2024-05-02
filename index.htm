@@ -149,6 +149,7 @@
         getRandomFile().then((path) => {
           songPath = path;
           audio = new Audio(songPath);
+          audio.volume = 0.15;
           correctSongName = songPath.split('\\').pop().split('.').shift();
           console.log("Audio :->");
         });
@@ -186,7 +187,7 @@
         if (audio.currentTime > maxDuration) {
           audio.pause();
           audio.currentTime = 0;
-        }
+        };
       });
     }
     
