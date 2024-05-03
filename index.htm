@@ -114,18 +114,28 @@
 
   <script>
     const songList = document.getElementById("songs");
-    const songFile = "songs.txt";
 
-    fetch(songFile, { encoding: "utf-8" })
-      .then(response => response.text())
-      .then(data => {
-        const songs = data.split("\n").map(song => song.trim());
-        songs.forEach(song => {
-          const option = document.createElement("option");
-          option.value = song;
-          songList.appendChild(option);
-        });
-      });
+    function addTracksToDatalist(data, dataList) {
+      if (Array.isArray(data)) {
+          // If data is an array, treat it as a single list of tracks
+          data.forEach(track => {
+              const option = document.createElement("option");
+              option.value = track;
+              dataList.appendChild(option);
+          });
+      } else {
+          // If data is an object, iterate over each album
+          for (let album in data) {
+              if (data.hasOwnProperty(album)) {
+                  data[album].forEach(track => {
+                      const option = document.createElement("option");
+                      option.value = track;
+                      dataList.appendChild(option);
+                  });
+              }
+          }
+      }
+    }
 
     const get_song = document.getElementById("get-song");
     let maxDuration;
@@ -267,7 +277,6 @@
         if (e.key === "Enter" || e.key === "Done" || e.key === "Go") { // Fungerar för iPhone och Android (Ifall man hade en server som filen kunde hämtas från)
           let inputValue = input.value;
           console.log(inputValue);
-          getAlbumCover()
           if (inputValue.length != 0) {
             input.readOnly = true;
             if (inputValue.toLowerCase() === correctSongName.toLowerCase()) {
@@ -306,6 +315,7 @@
                 feedback_1.style.display = "block";
               }
               else if (guessCount === 2) { // Andra o.s.v
+                getAlbumCover()
                 maxDuration += 5;
                 albumImage.style.display = "block";
                 coverQuestionmark.style.display = "none";
@@ -453,213 +463,205 @@
       nextSong();
     }
 
+    const albums = {
+      kent: [
+          "Blåjeans",
+          "Som vatten",
+          "Ingenting någonsin",
+          "När det blåser på månen",
+          "Jag vill inte vara rädd",
+          "Vad två öron klarar",
+          "Den osynlige mannen",
+          "Pojken med hålet i handen",
+          "Ingen kommer att tro dig",
+          "Stenbrott",
+          "Frank"
+      ],
+      verkligen: [
+          "Avtryck",
+          "Kräm (så nära får ingen gå)",
+          "Gravitation",
+          "Istället för ljud",
+          "10 minuter (för mig själv)",
+          "En timme en minut",
+          "Indianer",
+          "Halka",
+          "Thinner",
+          "Vi kan väl vänta tills imorgon"
+      ],
+      isola: [
+          "Livräddaren",
+          "Om du var här",
+          "Saker man ser",
+          "Oprofessionell",
+          "OWC",
+          "Celsius",
+          "Bianca",
+          "Innan allting tar slut",
+          "Elvis",
+          "Glider",
+          "747",
+          "Velvet"
+      ],
+      hagnestaHill: [
+          "Kungen är död",
+          "Revolt III",
+          "Musik Non Stop",
+          "Kevlarsjäl",
+          "Ett tidsfördriv att dö för",
+          "Stoppa mig juni (Lilla ego)",
+          "En himmelsk drog",
+          "Stanna hos mig",
+          "Cowboys",
+          "Beskyddaren",
+          "Berg & dalvana",
+          "Insekter",
+          "Visslaren"
+      ],
+      bSidor9500: [
+          "Chans",
+          "Spökstad",
+          "Längtan skala 3:1",
+          "Om gyllene år",
+          "Noll",
+          "Önskar att någon…",
+          "Bas riff",
+          "Din skugga",
+          "Elever",
+          "Längesen vi sågs",
+          "December",
+          "Utan dina andetag",
+          "På nära håll",
+          "Livrädd med stil",
+          "Verkligen",
+          "Gummiband",
+          "Att presentera ett svin",
+          "En helt ny karriär",
+          "Rödljus",
+          "Kallt kaffe",
+          "Slutsats",
+          "Rödljus II",
+          "En helt ny karriär II"
+      ],
+      vapenAmmunition: [
+          "Sundance Kid",
+          "Pärlor",
+          "Dom andra",
+          "Duett",
+          "Hur jag fick dig att älska mig",
+          "Kärleken väntar",
+          "Socker",
+          "FF",
+          "Elite",
+          "Sverige"
+      ],
+      vinterNoll2: [
+          "VinterNoll2"
+      ],
+      duJagOchDoden: [
+          "400 slag",
+          "Du är ånga",
+          "Den döda vinkeln",
+          "Du var min armé",
+          "Palace & Main",
+          "Järnspöken",
+          "Klåparen",
+          "Max 500",
+          "Romeo återvänder ensam",
+          "Rosor & palmblad",
+          "Mannen i den vita hatten (16 år senare)"
+      ],
+      tillbakaTillSamtiden: [
+          "Elefanter",
+          "Berlin",
+          "Ingenting",
+          "Vid din sida",
+          "Columbus",
+          "Sömnen",
+          "Vy från ett luftslott",
+          "Våga vara rädd",
+          "LSD, någon?",
+          "Generation ex",
+          "Ensammast i Sverige"
+      ],
+      rod: [
+          "18:29-4",
+          "Taxmannen",
+          "Krossa allt",
+          "Hjärta",
+          "Sjukhus",
+          "Vals för satan (din vän pessimisten)",
+          "Idioter",
+          "Svarta linjer",
+          "Ensamheten",
+          "Töntarna",
+          "Det finns inga ord"
+      ],
+      enPlatsISolen: [
+          "Glasäpplen",
+          "Ismael",
+          "Skisser för sommaren",
+          "Ärlighet respekt kärlek",
+          "Varje gång du möter min blick",
+          "Ensam lång väg hem",
+          "Team Building",
+          "Gamla Ullevi",
+          "Minimalen",
+          "Passagerare (Ft. Rebecka Törnqvist)"
+      ],
+      jagArInteRaddForMorkret: [
+          "999",
+          "Petroleum",
+          "Isis & Bast",
+          "Jag ser dig",
+          "Tänd på",
+          "Beredd på allt",
+          "Ruta 1",
+          "Färger på natten",
+          "Låt dom komma",
+          "Hänsyn"
+      ],
+      tigerdrottningen: [
+          "Mirage",
+          "Var är vi nu?",
+          "Skogarna",
+          "La Belle Epoque",
+          "Svart snö",
+          "Allt har sin tid",
+          "Innan himlen faller ner",
+          "Din enda vän",
+          "Godhet (Ft. Beatrice Eli)",
+          "Simmaren",
+          "Den andra sidan"
+      ],
+      daSomNuForAlltid: [
+          "Andromeda",
+          "Tennsoldater",
+          "Vi är för alltid",
+          "Den vänstra stranden",
+          "Nattpojken & Dagflickan (Ft. Anna Ternheim)",
+          "Vi är inte längre där",
+          "Förlåtelsen",
+          "Skyll inte ifrån dig",
+          "Gigi",
+          "Falska profeter",
+          "Den sista sången"
+      ]
+    };
     
-    function getAlbumCover() { // Väldigt lat lösning
-      // const Namn av albumet [Låtar i det albumet]
-      const kent = [
-        "Blåjeans",
-        "Som vatten",
-        "Ingenting någonsin",
-        "När det blåser på månen",
-        "Jag vill inte vara rädd",
-        "Vad två öron klarar",
-        "Den osynlige mannen",
-        "Pojken med hålet i handen",
-        "Ingen kommer att tro dig",
-        "Stenbrott",
-        "Frank"
-      ];
-
-      const verkligen = [
-        "Avtryck",
-        "Kräm (så nära får ingen gå)",
-        "Gravitation",
-        "Istället för ljud",
-        "10 minuter (för mig själv)",
-        "En timme en minut",
-        "Indianer",
-        "Halka",
-        "Thinner",
-        "Vi kan väl vänta tills imorgon"
-      ];
-
-      const isola = [
-        "Livräddaren",
-        "Om du var här",
-        "Saker man ser",
-        "Oprofessionell",
-        "OWC",
-        "Celsius",
-        "Bianca",
-        "Innan allting tar slut",
-        "Elvis",
-        "Glider",
-        "747",
-        "Velvet"
-      ];
-
-      const hagnestaHill = [
-        "Kungen är död",
-        "Revolt III",
-        "Musik Non Stop",
-        "Kevlarsjäl",
-        "Ett tidsfördriv att dö för",
-        "Stoppa mig juni (Lilla ego)",
-        "En himmelsk drog",
-        "Stanna hos mig",
-        "Cowboys",
-        "Beskyddaren",
-        "Berg & dalvana",
-        "Insekter",
-        "Visslaren"
-      ];
-
-      const bSidor9500 = [
-        "Chans",
-        "Spökstad",
-        "Längtan skala 3:1",
-        "Om gyllene år",
-        "Noll",
-        "Önskar att någon…",
-        "Bas riff",
-        "Din skugga",
-        "Elever",
-        "Längesen vi sågs",
-        "December",
-        "Utan dina andetag",
-        "På nära håll",
-        "Livrädd med stil",
-        "Verkligen",
-        "Gummiband",
-        "Att presentera ett svin",
-        "En helt ny karriär",
-        "Rödljus",
-        "Kallt kaffe",
-        "Slutsats",
-        "Rödljus II",
-        "En helt ny karriär II"
-      ];
-
-      const vapenAmmunition = [
-        "Sundance Kid",
-        "Pärlor",
-        "Dom andra",
-        "Duett",
-        "Hur jag fick dig att älska mig",
-        "Kärleken väntar",
-        "Socker",
-        "FF",
-        "Elite",
-        "Sverige"
-      ];
-
-      const vinterNoll2 = [
-        "VinterNoll2"
-      ];
-
-      const duJagOchDoden = [
-        "400 slag",
-        "Du är ånga",
-        "Den döda vinkeln",
-        "Du var min armé",
-        "Palace & Main",
-        "Järnspöken",
-        "Klåparen",
-        "Max 500",
-        "Romeo återvänder ensam",
-        "Rosor & palmblad",
-        "Mannen i den vita hatten (16 år senare)"
-      ];
-
-      const tillbakaTillSamtiden = [
-        "Elefanter",
-        "Berlin",
-        "Ingenting",
-        "Vid din sida",
-        "Columbus",
-        "Sömnen",
-        "Vy från ett luftslott",
-        "Våga vara rädd",
-        "LSD, någon?",
-        "Generation ex",
-        "Ensammast i Sverige"
-      ];
-
-      const rod = [
-        "18:29-4",
-        "Taxmannen",
-        "Krossa allt",
-        "Hjärta",
-        "Sjukhus",
-        "Vals för satan (din vän pessimisten)",
-        "Idioter",
-        "Svarta linjer",
-        "Ensamheten",
-        "Töntarna",
-        "Det finns inga ord"
-      ];
-
-      const enPlatsISolen = [
-        "Glasäpplen",
-        "Ismael",
-        "Skisser för sommaren",
-        "Ärlighet respekt kärlek",
-        "Varje gång du möter min blick",
-        "Ensam lång väg hem",
-        "Team Building",
-        "Gamla Ullevi",
-        "Minimalen",
-        "Passagerare (Ft. Rebecka Törnqvist)"
-      ];
-
-      const jagArInteRaddForMorkret = [
-        "999",
-        "Petroleum",
-        "Isis & Bast",
-        "Jag ser dig",
-        "Tänd på",
-        "Beredd på allt",
-        "Ruta 1",
-        "Färger på natten",
-        "Låt dom komma",
-        "Hänsyn"
-      ];
-
-      const tigerdrottningen = [
-        "Mirage",
-        "Var är vi nu?",
-        "Skogarna",
-        "La Belle Epoque",
-        "Svart snö",
-        "Allt har sin tid",
-        "Innan himlen faller ner",
-        "Din enda vän",
-        "Godhet (Ft. Beatrice Eli)",
-        "Simmaren",
-        "Den andra sidan"
-      ];
-
-      const daSomNuForAlltid = [
-        "Andromeda",
-        "Tennsoldater",
-        "Vi är för alltid",
-        "Den vänstra stranden",
-        "Nattpojken & Dagflickan (Ft. Anna Ternheim)",
-        "Vi är inte längre där",
-        "Förlåtelsen",
-        "Skyll inte ifrån dig",
-        "Gigi",
-        "Falska profeter",
-        "Den sista sången"
-      ];
-
-      if (correctSongName in kent) {
-        albumImage.src = "Album/Kent.jpg"
+    function getAlbumCover() { // Hämtar rätt albumbild samt gör om datalistan så att den endast har låtarna tillhörandes det albumet!
+      for (const [albumName, songs] of Object.entries(albums)) {
+        if (songs.map(song => song.toLowerCase()).includes(correctSongName.toLowerCase())) {
+            albumImage.src = `Album/${albumName}.jpg`;
+            let dataListAlbum = albums[albumName]
+            songList.innerHTML = "";
+            addTracksToDatalist(dataListAlbum, songList)
+            break;
+        };
       };
     };
-
-    
-</script>
+    addTracksToDatalist(albums, songList);   
+  </script>
 </body>
 
 </html>
