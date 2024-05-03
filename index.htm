@@ -167,6 +167,9 @@
     
     function nextSong() { //Konfiguerar vad som ska slutas visas / visas och resetas när man trycker på "next song" knappen.
       getNewSong();
+      songList.innerHTML = "";
+      addTracksToDatalist(albums, songList);
+      previousGuesses = [];
       guessCount = 0;
       albumImage.style.display = "none";
       coverQuestionmark.style.display = "block";
@@ -348,9 +351,6 @@
       });
     });
     
-    nextSong();
-
-
     const place1 = document.getElementById("p1");
     const name1 = place1.querySelector(".name").textContent;
     const points1 = place1.querySelector(".points").textContent.trim();
@@ -663,7 +663,8 @@
         };
       };
     };
-    addTracksToDatalist(albums, songList);   
+    addTracksToDatalist(albums, songList);
+    nextSong();
   </script>
 </body>
 
