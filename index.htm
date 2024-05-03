@@ -25,7 +25,7 @@
       <h2 class="album-text center-align" id="album-heading">Albumbild</h2>
       <section class="cover-container center-align" id="album-cover">
         <div class="cover-square">
-          <img id="album-image" src="Album/Kent.jpg" alt="Cover"> <!-- Add the Correct name of the cover???? AND the correct name of the cover (variable)-->
+          <img id="album-image" src="" alt="Cover"> <!-- Add the Correct name of the cover???? AND the correct name of the cover (variable)-->
           <span id="cover-questionmark">?</span>
         </div>
       </section>
@@ -133,31 +133,29 @@
     let correctSongName;
     let audio;
 
-    function getNewSong() {
+    function getNewSong() { 
         async function getRandomFile() {
           try {
-            const response = await fetch('http://localhost:3000/getRandomFile'); // Send a request to the server
-            const filePath = await response.text(); // Get the file path from the response
+            const response = await fetch('http://localhost:3000/getRandomFile'); // Skickar en "request" från Node servern
+            const filePath = await response.text(); // Får filen (väntar på att response får en fil från fetch)
             console.log("Random file path:", filePath);
             return filePath;
-            // Use the file path here (e.g., play the audio, display an image, etc.)
           } catch (error) {
             console.error("Error fetching random file:", error);
           }
         }
-        console.log("File -> Audio");
+
         getRandomFile().then((path) => {
           songPath = path;
           audio = new Audio(songPath);
           audio.volume = 0.15;
-          correctSongName = songPath.split('\\').pop().split('.').shift();
-          console.log("Audio :->");
+          correctSongName = songPath.split('\\').pop().split('.').shift(); // Gör om file pathen till en string med endast sång namnet (music/Blåjeans.mp3 -> Blåjeans)
         });
         
-        maxDuration = 7;
+        maxDuration = 7; // För låten att spelas upp (under första "lyssningen")
     }
     
-    function nextSong() {
+    function nextSong() { //Konfiguerar vad som ska slutas visas / visas och resetas när man trycker på "next song" knappen.
       getNewSong();
       guessCount = 0;
       albumImage.style.display = "none";
@@ -184,7 +182,7 @@
     function playMusic() {
       audio.play();
       audio.addEventListener("timeupdate", function() {
-        if (audio.currentTime > maxDuration) {
+        if (audio.currentTime > maxDuration) { //ifall musiken överskrider maxduration så kommer den pausas och resetas till 0s så att man kan lyssna på den igen
           audio.pause();
           audio.currentTime = 0;
         };
@@ -212,14 +210,15 @@
     const leaderboard = document.getElementById("leaderboard-section");
     const displayNoneList = [feedback_1, feedback_2, feedback_3, nextButton, pointScore, answer];
     const guessList = [guess1, guess2, guess3, guess4];
+
     nextButton.addEventListener("click", function() {
       audio.pause();
       if (songNumber <= 5) {
         nextSong();
       }
-      else {
+      else { // Ifall man har gissat på 5 sånger så kommer allt bli display "none" och leaderboard m.m kommer visas istället.
         childElements.forEach(function(child) {
-          // Check if the node is an element node (nodeType 1)
+
           if (child.nodeType === 1) {
               child.style.display = 'none';
           }
@@ -243,7 +242,7 @@
       play.style.transform = "scale(1)";
     }
 
-    function animateButton() {
+    function animateButton() { // Gör så att playbutton  blir mindre när man har tryckt på den (så att man vet att man har tryckt på den)
       play.style.transform = "scale(0.9)";
     
       setTimeout(resetScale, 100);
@@ -262,11 +261,13 @@
     let guessCount;
     let playerScore = 0;
     let songNumber = 5;
-    Array.from(songNameInputs).forEach(input => {
-      input.addEventListener('keydown', function(e) {
-        if (e.key === "Enter" || e.key === "Done" || e.key === "Go") {
+
+    Array.from(songNameInputs).forEach(input => { // Huvudsakliga functionerna för att spelet ska fungera
+      input.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.key === "Done" || e.key === "Go") { // Fungerar för iPhone och Android (Ifall man hade en server som filen kunde hämtas från)
           let inputValue = input.value;
           console.log(inputValue);
+          getAlbumCover()
           if (inputValue.length != 0) {
             input.readOnly = true;
             if (inputValue.toLowerCase() === correctSongName.toLowerCase()) {
@@ -288,6 +289,7 @@
               if (guessCount === 3){
                 playerScore += 200;
               }
+
               pointScore.textContent = "Poäng: " + playerScore;
               pointScore.style.display = "block";
               nextButton.style.display = "block";
@@ -297,13 +299,13 @@
             else {
               input.style.backgroundColor = "#BBBBBB";
               guessCount += 1;
-              if (guessCount === 1) {
+              if (guessCount === 1) { // Första gången man har fel 
                 maxDuration += 8;
                 guess2.readOnly = false;
                 audio.currentTime = 0;
                 feedback_1.style.display = "block";
               }
-              else if (guessCount === 2) {
+              else if (guessCount === 2) { // Andra o.s.v
                 maxDuration += 5;
                 albumImage.style.display = "block";
                 coverQuestionmark.style.display = "none";
@@ -368,7 +370,7 @@
     
 
     // Väldigt "fult" kan säkert göras med mindre kod
-    submit.addEventListener("click", function() {
+    submit.addEventListener("click", function() { // Funktion för att kunna submita sitt resultat till leaderboarden
       if (playerName.value !== '' || playerName.value !== undefined) {
         if (points1 < playerScore) {
           place5.querySelector(".points").textContent = place4.querySelector(".points").textContent;
@@ -431,7 +433,7 @@
       songNumber = 1;
 
       childElements.forEach(function(child) {
-        // Check if the node is an element node (nodeType 1)
+        // Gör så att allting som tidigare blivit "display:none;" blir synligt igen samt "display:none;:ar" allting leaderboard relaterat.
         if (child.nodeType === 1) {
             child.style.display = 'flex';
         }
@@ -450,6 +452,211 @@
 
       nextSong();
     }
+
+    
+    function getAlbumCover() { // Väldigt lat lösning
+      // const Namn av albumet [Låtar i det albumet]
+      const kent = [
+        "Blåjeans",
+        "Som vatten",
+        "Ingenting någonsin",
+        "När det blåser på månen",
+        "Jag vill inte vara rädd",
+        "Vad två öron klarar",
+        "Den osynlige mannen",
+        "Pojken med hålet i handen",
+        "Ingen kommer att tro dig",
+        "Stenbrott",
+        "Frank"
+      ];
+
+      const verkligen = [
+        "Avtryck",
+        "Kräm (så nära får ingen gå)",
+        "Gravitation",
+        "Istället för ljud",
+        "10 minuter (för mig själv)",
+        "En timme en minut",
+        "Indianer",
+        "Halka",
+        "Thinner",
+        "Vi kan väl vänta tills imorgon"
+      ];
+
+      const isola = [
+        "Livräddaren",
+        "Om du var här",
+        "Saker man ser",
+        "Oprofessionell",
+        "OWC",
+        "Celsius",
+        "Bianca",
+        "Innan allting tar slut",
+        "Elvis",
+        "Glider",
+        "747",
+        "Velvet"
+      ];
+
+      const hagnestaHill = [
+        "Kungen är död",
+        "Revolt III",
+        "Musik Non Stop",
+        "Kevlarsjäl",
+        "Ett tidsfördriv att dö för",
+        "Stoppa mig juni (Lilla ego)",
+        "En himmelsk drog",
+        "Stanna hos mig",
+        "Cowboys",
+        "Beskyddaren",
+        "Berg & dalvana",
+        "Insekter",
+        "Visslaren"
+      ];
+
+      const bSidor9500 = [
+        "Chans",
+        "Spökstad",
+        "Längtan skala 3:1",
+        "Om gyllene år",
+        "Noll",
+        "Önskar att någon…",
+        "Bas riff",
+        "Din skugga",
+        "Elever",
+        "Längesen vi sågs",
+        "December",
+        "Utan dina andetag",
+        "På nära håll",
+        "Livrädd med stil",
+        "Verkligen",
+        "Gummiband",
+        "Att presentera ett svin",
+        "En helt ny karriär",
+        "Rödljus",
+        "Kallt kaffe",
+        "Slutsats",
+        "Rödljus II",
+        "En helt ny karriär II"
+      ];
+
+      const vapenAmmunition = [
+        "Sundance Kid",
+        "Pärlor",
+        "Dom andra",
+        "Duett",
+        "Hur jag fick dig att älska mig",
+        "Kärleken väntar",
+        "Socker",
+        "FF",
+        "Elite",
+        "Sverige"
+      ];
+
+      const vinterNoll2 = [
+        "VinterNoll2"
+      ];
+
+      const duJagOchDoden = [
+        "400 slag",
+        "Du är ånga",
+        "Den döda vinkeln",
+        "Du var min armé",
+        "Palace & Main",
+        "Järnspöken",
+        "Klåparen",
+        "Max 500",
+        "Romeo återvänder ensam",
+        "Rosor & palmblad",
+        "Mannen i den vita hatten (16 år senare)"
+      ];
+
+      const tillbakaTillSamtiden = [
+        "Elefanter",
+        "Berlin",
+        "Ingenting",
+        "Vid din sida",
+        "Columbus",
+        "Sömnen",
+        "Vy från ett luftslott",
+        "Våga vara rädd",
+        "LSD, någon?",
+        "Generation ex",
+        "Ensammast i Sverige"
+      ];
+
+      const rod = [
+        "18:29-4",
+        "Taxmannen",
+        "Krossa allt",
+        "Hjärta",
+        "Sjukhus",
+        "Vals för satan (din vän pessimisten)",
+        "Idioter",
+        "Svarta linjer",
+        "Ensamheten",
+        "Töntarna",
+        "Det finns inga ord"
+      ];
+
+      const enPlatsISolen = [
+        "Glasäpplen",
+        "Ismael",
+        "Skisser för sommaren",
+        "Ärlighet respekt kärlek",
+        "Varje gång du möter min blick",
+        "Ensam lång väg hem",
+        "Team Building",
+        "Gamla Ullevi",
+        "Minimalen",
+        "Passagerare (Ft. Rebecka Törnqvist)"
+      ];
+
+      const jagArInteRaddForMorkret = [
+        "999",
+        "Petroleum",
+        "Isis & Bast",
+        "Jag ser dig",
+        "Tänd på",
+        "Beredd på allt",
+        "Ruta 1",
+        "Färger på natten",
+        "Låt dom komma",
+        "Hänsyn"
+      ];
+
+      const tigerdrottningen = [
+        "Mirage",
+        "Var är vi nu?",
+        "Skogarna",
+        "La Belle Epoque",
+        "Svart snö",
+        "Allt har sin tid",
+        "Innan himlen faller ner",
+        "Din enda vän",
+        "Godhet (Ft. Beatrice Eli)",
+        "Simmaren",
+        "Den andra sidan"
+      ];
+
+      const daSomNuForAlltid = [
+        "Andromeda",
+        "Tennsoldater",
+        "Vi är för alltid",
+        "Den vänstra stranden",
+        "Nattpojken & Dagflickan (Ft. Anna Ternheim)",
+        "Vi är inte längre där",
+        "Förlåtelsen",
+        "Skyll inte ifrån dig",
+        "Gigi",
+        "Falska profeter",
+        "Den sista sången"
+      ];
+
+      if (correctSongName in kent) {
+        albumImage.src = "Album/Kent.jpg"
+      };
+    };
 
     
 </script>
