@@ -271,13 +271,14 @@
     let guessCount;
     let playerScore = 0;
     let songNumber = 1;
-
+    let previousGuesses = [];
     Array.from(songNameInputs).forEach(input => { // Huvudsakliga functionerna för att spelet ska fungera
       input.addEventListener("keydown", function(e) {
         if (e.key === "Enter" || e.key === "Done" || e.key === "Go") { // Fungerar för iPhone och Android (Ifall man hade en server som filen kunde hämtas från)
           let inputValue = input.value;
           console.log(inputValue);
-          if (inputValue.length != 0) {
+          if (!previousGuesses.includes(inputValue) && inputValue.length != 0) {
+            previousGuesses.push(inputValue)
             input.readOnly = true;
             if (inputValue.toLowerCase() === correctSongName.toLowerCase()) {
               input.style.backgroundColor = "#65B163";
