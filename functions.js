@@ -1,13 +1,13 @@
 function addTracksToDatalist(data, dataList) {
   if (Array.isArray(data)) {
-      // If data is an array, treat it as a single list of tracks
+      // Ifall data är en array så kommer den vara ett helt album av låtar
       data.forEach(track => {
           const option = document.createElement("option");
           option.value = track;
           dataList.appendChild(option);
       });
   } else {
-      // If data is an object, iterate over each album
+      // Ifall det är ett object så ittereras den (genom album)
       for (let album in data) {
           if (data.hasOwnProperty(album)) {
               data[album].forEach(track => {
@@ -106,7 +106,7 @@ function nextSong() { //Konfiguerar vad som ska slutas visas / visas och resetas
   pointScore.textContent = "Poäng: " + playerScore;
 }
 
-function submitToLeaderboard() {
+function submitToLeaderboard() { 
   if (playerName.value !== '' || playerName.value !== undefined) {
     if (points1 < playerScore) {
       place5.querySelector(".points").textContent = place4.querySelector(".points").textContent;
